@@ -2,4 +2,4 @@ source 'https://rubygems.org'
 
 gem 'bundler'
 gem 'faker'
-gem 'pqueue'
+gem 'priority_queue_cxx'

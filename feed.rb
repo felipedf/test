@@ -1,16 +1,18 @@
-require 'pqueue'
+require 'fc'
 
 class Feed
   def initialize(user)
     @user = user
+    @feed_queue = FastContainers::PriorityQueue.new(:max)
   end
 
   def retrieve
     relevant_authors = classify_authors
 
     books = fetch_books(relevant_authors)
-    classify_books(books, relevant_authors)
-    feed_queue = PQueue.new(books)
+    calculate_books_priority(books, relevant_authors)
+
+    @feed_queue.pop_each { |book, priority| puts([book, priority]) }
   end
 
   def refresh
@@ -31,9 +33,15 @@ class Feed
     authors
   end
 
-  def classify_books(books, authors)
-    books.each do |book|
-      #TODO
+  def calculate_books_priority(books, authors)
+    books.each_with_object({}) do |book, hash|
+      hash[book] = 0.1
+      days_old = Date.today - book.published_on
+      date_coefficient = 0.20 - (days_old * 0.02)
+      hash[book] += [0, date_coefficient].max
+      hash[book] += authors[book.author] if authors[book.author]
+
+      @feed_queue.push(book.title, hash[book])
     end
   end
 

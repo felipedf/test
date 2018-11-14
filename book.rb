@@ -4,7 +4,6 @@ class Book
   def initialize(author, title, published_on)
     @author = author
     @title = title
-    binding.pry
     @published_on = published_on
     @upvoters = []
     @recommendations = 0

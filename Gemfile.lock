@@ -6,7 +6,7 @@ GEM
       i18n (>= 0.7)
     i18n (1.1.1)
       concurrent-ruby (~> 1.0)
-    pqueue (2.1.0)
+    priority_queue_cxx (0.3.4)
 
 PLATFORMS
   ruby
@@ -14,7 +14,7 @@ PLATFORMS
 DEPENDENCIES
   bundler
   faker
-  pqueue
+  priority_queue_cxx
 
 BUNDLED WITH
    1.16.5
