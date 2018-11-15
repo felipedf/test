@@ -29,4 +29,9 @@ class DataSeeder
       Follow.compute_follow(user, authors.sample)
     end
   end
+
+  def self.create_users(total_users)
+    users = []
+    total_users.each { users << User.new(Faker::User.name) }
+  end
 end
