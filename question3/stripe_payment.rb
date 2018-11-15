@@ -1,0 +1,2 @@
+class StripePayment < PaymentMethod
+end

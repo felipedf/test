@@ -19,3 +19,6 @@ end
 
 feed = Feed.new(Seeding.seed)
 p feed.retrieve
+p "#======================================================#"
+feed.refresh
+p feed.retrieve

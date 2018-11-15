@@ -7,25 +7,36 @@ class Feed
   end
 
   def retrieve
-    relevant_authors = classify_authors
+    refresh
+    feed = []
+    @feed_queue.pop_each {|book, _| feed << book}
 
-    books = fetch_books(relevant_authors)
-    calculate_books_priority(books, relevant_authors)
-
-    @feed_queue.pop_each { |book, priority| puts([book, priority]) }
+    feed
   end
 
   def refresh
-    # TODO: need more details about this.
+    relevant_authors = classify_authors
+    books = fetch_books(5, relevant_authors)
+    calculate_books_priority(books, relevant_authors)
   end
 
   private
 
+  # Classify all authors somewhat related to the user, either the user has
+  # upvoted the author's boook or follows the author.
+  # Return a Hash, where the keys are authors and the values are the percentage
+  # bonus.
   def classify_authors
+    # This adds a coefficient of 0.1 that meaning that all books from a
+    # a author that this particular user upvoted, will have 10% more chance
+    # to appear o his feed.
     authors = @user.upvoted_books.each_with_object({}) do |book, hash|
       author = book.author
-      hash[author] = (hash[author] || 0) + 0.1
+      hash[author] = (hash[author] || 0) + 0.05
     end
+
+    # This does the same as above, but adds 15% more chance to books of an author
+    # that the user follows.
     @user.following.each do |author|
       authors[author] = (authors[author] || 0) + 0.15
     end
@@ -33,7 +44,7 @@ class Feed
     authors
   end
 
-  def calculate_books_priority(books, authors)
+  def calculate_books_priority(books, authors = [])
     books.each_with_object({}) do |book, hash|
       hash[book] = 0.1
       days_old = Date.today - book.published_on
@@ -46,10 +57,11 @@ class Feed
   end
 
   # Fake a book fetch from some source
-  def fetch_books(relevant_authors)
+  def fetch_books(total_new_books, relevant_authors)
     # Adding some random authors so we may have some books that weren't authored
     # by any author related to this particular user.
     authors = DataSeeder.create_authors(3) + relevant_authors.keys
-    DataSeeder.create_books(10, authors)
+    binding.pry
+    DataSeeder.create_books(total_new_books, authors)
   end
 end

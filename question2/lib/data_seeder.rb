@@ -8,6 +8,7 @@ class DataSeeder
 
   def self.create_books(total_books, authors)
     books = []
+    binding.pry
     # Using +array.sample+ here to pick a random author from the list.
     total_books.times { books << Book.new(authors.sample, Faker::Book.title, Faker::Date.backward)}
 
